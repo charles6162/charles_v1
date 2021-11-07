@@ -1,6 +1,4 @@
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
-
 const User = require("../src/users/user.model");
 
 async function validateToken(req, res, next) {
@@ -9,32 +7,32 @@ async function validateToken(req, res, next) {
   if (!authorizationHeader)
     return res.status(401).json({
       error: true,
-      message: "Access token is missing",
+      message: "헤더에 토큰이 없습니다.",
     });
 
-  const token = req.headers.authorization.split(" ")[1]; // Bearer <token>
+  const token = req.headers.authorization.split("Bearer ")[1]; // Bearer <token>
   const options = {
-    expiresIn: "1h",
+    expiresIn: "1m",
   };
   try {
     let user = await User.findOne({
       accessToken: token,
     });
-    // console.log(token);
+    __logger.debug(`token : ${token}`);
     if (!user) {
       result = {
         error: true,
-        message: `Authorization error`,
+        message: `사용자가 없습니다.`,
       };
       return res.status(403).json(result);
     }
 
-    result = jwt.verify(token, process.env.JWT_SECRET, options);
-
+    result = jwt.verify(token, __Config.JWT_SECRET, options);
+    __logger.debug(`jwt.verify : ${JSON.stringify(result)}`);
     if (!user.userId === result.id) {
       result = {
         error: true,
-        message: `Invalid token`,
+        message: `잘못된 토큰입니다.`,
       };
 
       return res.status(401).json(result);
@@ -45,11 +43,11 @@ async function validateToken(req, res, next) {
     req.decoded = result;
     next();
   } catch (err) {
-    // console.log(err);
+    __logger.error(err);
     if (err.name === "TokenExpiredError") {
       result = {
         error: true,
-        message: `TokenExpired`,
+        message: `토큰의 유효기간이 지났습니다.`,
       };
     } else {
       result = {

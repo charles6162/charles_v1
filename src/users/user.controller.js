@@ -1,5 +1,4 @@
 const Joi = require("joi");
-require("dotenv").config();
 const { v4: uuid } = require("uuid");
 const { customAlphabet: generate } = require("nanoid");
 
@@ -14,7 +13,7 @@ const REFERRAL_CODE_LENGTH = 8;
 
 const referralCode = generate(CHARACTER_SET, REFERRAL_CODE_LENGTH);
 
-//Validate user schema
+//Joi로 유효성 검사
 const userSchema = Joi.object().keys({
   email: Joi.string().email({ minDomainSegments: 2 }),
   password: Joi.string().required().min(4),
@@ -26,15 +25,15 @@ exports.Signup = async (req, res) => {
   try {
     const result = userSchema.validate(req.body);
     if (result.error) {
-      console.log(result.error.message);
+      __logger.error(result.error.message);
       return res.json({
         error: true,
         status: 400,
         message: result.error.message,
       });
     }
-
-    //Check if the email has been already registered.
+   
+    //사용중인 이메일있는지 체크
     var user = await User.findOne({
       email: result.value.email,
     });
@@ -42,7 +41,7 @@ exports.Signup = async (req, res) => {
     if (user) {
       return res.json({
         error: true,
-        message: "Email is already in use",
+        message: "사용하는 이메일이 있습니다.",
       });
     }
 
@@ -58,14 +57,15 @@ exports.Signup = async (req, res) => {
 
     let expiry = Date.now() + 60 * 1000 * 15; //15 mins in ms
 
-    const sendCode = await sendEmail(result.value.email, code);
+    //const sendCode = await sendEmail(result.value.email, code);
 
-    if (sendCode.error) {
-      return res.status(500).json({
-        error: true,
-        message: "Couldn't send verification email.",
-      });
-    }
+    // if (sendCode.error) {
+    //   return res.status(500).json({
+    //     error: true,
+    //     message: "Couldn't send verification email.",
+    //   });
+    // }
+    __logger.debug('email code : '+code)
     result.value.emailToken = code;
     result.value.emailTokenExpires = new Date(expiry);
 
@@ -91,7 +91,7 @@ exports.Signup = async (req, res) => {
       referralCode: result.value.referralCode,
     });
   } catch (error) {
-    console.error("signup-error", error);
+    __logger.error("signup-error", error);
     return res.status(500).json({
       error: true,
       message: "Cannot Register",
@@ -140,7 +140,7 @@ exports.Activate = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error("activation-error", error);
+    __logger.error("activation-error", error);
     return res.status(500).json({
       error: true,
       message: error.message,
@@ -169,13 +169,13 @@ exports.Login = async (req, res) => {
         message: "Account not found",
       });
     }
-
+ 
     //2. Throw error if account is not activated
     if (!user.active) {
-      return res.status(400).json({
-        error: true,
-        message: "You must verify your email to activate your account",
-      });
+       return res.status(400).json({
+         error: true,
+         message: "You must verify your email to activate your account",
+       });
     }
 
     //3. Verify the password is valid
@@ -207,7 +207,7 @@ exports.Login = async (req, res) => {
       accessToken: token,
     });
   } catch (err) {
-    console.error("Login error", err);
+    __logger.error("Login error"+ err);
     return res.status(500).json({
       error: true,
       message: "Couldn't login. Please try again later.",
@@ -258,7 +258,7 @@ exports.ForgotPassword = async (req, res) => {
         "If that email address is in our database, we will send you an email to reset your password",
     });
   } catch (error) {
-    console.error("forgot-password-error", error);
+    __logger.error("forgot-password-error"+error);
     return res.status(500).json({
       error: true,
       message: error.message,
@@ -304,7 +304,7 @@ exports.ResetPassword = async (req, res) => {
       message: "Password has been changed",
     });
   } catch (error) {
-    console.error("reset-password-error", error);
+    __logger.error("reset-password-error"+error);
     return res.status(500).json({
       error: true,
       message: error.message,
@@ -326,7 +326,7 @@ exports.ReferredAccounts = async (req, res) => {
       total: referredAccounts.length,
     });
   } catch (error) {
-    console.error("fetch-referred-error.", error);
+    __logger.error("fetch-referred-error."+error);
     return res.stat(500).json({
       error: true,
       message: error.message,
@@ -346,7 +346,7 @@ exports.Logout = async (req, res) => {
 
     return res.send({ success: true, message: "User Logged out" });
   } catch (error) {
-    console.error("user-logout-error", error);
+    __logger.error("user-logout-error"+error);
     return res.stat(500).json({
       error: true,
       message: error.message,

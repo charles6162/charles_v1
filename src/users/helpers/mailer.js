@@ -1,20 +1,12 @@
-require("dotenv").config();
 const nodemailer = require("nodemailer");
 
 async function sendEmail(email, code) {
   try {
-    const smtpEndpoint = "smtp.sendgrid.net";
-
-    const port = 465;
-
+    
     const senderAddress = "NAME <ADDRESS>";
 
     var toAddress = email;
-
-    const smtpUsername = "apikey";
-
-    const smtpPassword = process.env.SG_APIKEY;
-
+    
     var subject = "Verify your email";
 
     // The body of the email for recipients
@@ -27,13 +19,13 @@ async function sendEmail(email, code) {
 
     // Create the SMTP transport.
     let transporter = nodemailer.createTransport({
-      host: smtpEndpoint,
-      port: port,
-      secure: true, // true for 465, false for other ports
-      auth: {
-        user: smtpUsername,
-        pass: smtpPassword,
-      },
+      service: 'gmail',      
+      host: 'smtp.gmail.com',
+      auth: { 
+        user: __Config.EMAIL_USER, 
+        pass: __Config.EMAIL_PWD
+      }
+
     });
 
     // Specify the fields in the email.

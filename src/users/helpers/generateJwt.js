@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const Config = require(__base + '/config/config');
 
 const options = {
-  expiresIn: "1m",
+  expiresIn: "1h",
 };
 
 async function generateJwt(email, userId) {

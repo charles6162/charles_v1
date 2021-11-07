@@ -12,7 +12,7 @@ async function validateToken(req, res, next) {
 
   const token = req.headers.authorization.split("Bearer ")[1]; // Bearer <token>
   const options = {
-    expiresIn: "1m",
+    expiresIn: "1h",
   };
   try {
     let user = await User.findOne({

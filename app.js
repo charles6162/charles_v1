@@ -9,7 +9,7 @@ require('dotenv').config();
 global.__base      = __dirname;
 global.__Config      = process.env;                              //properties
 global.__logger      = require(__base+"/middlewares/logger");    //로그파일관리
-
+ 
 mongoose 
   .connect(__Config.MONGO_URL, {
     dbName: "SNS",

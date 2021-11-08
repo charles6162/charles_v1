@@ -1,9 +1,10 @@
 const jwt = require("jsonwebtoken");
 const User = require(__base+"/model/user.model");
 
+//
 const options = {
-  expiresIn: __Config.JWT_EXPRIE,
-};
+  expiresIn: __Config.JWT_EXPIRE,
+}; 
 
 async function generateJwt(email, userId) {
   try {

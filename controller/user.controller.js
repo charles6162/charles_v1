@@ -10,7 +10,7 @@ const userSchema = Joi.object().keys({
   password: Joi.string().required().min(4),
   confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
   referrer: Joi.string(),
-});
+}); 
 
 exports.Signup = async (req, res) => {
   try {

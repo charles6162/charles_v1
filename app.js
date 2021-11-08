@@ -1,5 +1,8 @@
-const express     = require("express");
-const mongoose    = require("mongoose");
+const express                       = require("express");
+const mongoose                      = require("mongoose");
+const mongoSanitize                 = require("express-mongo-sanitize");
+const { ErrorHandler, handleError } = require("./middlewares/error");
+
 require('dotenv').config();
 
 //global 설정
@@ -9,7 +12,7 @@ global.__logger      = require(__base+"/middlewares/logger");    //로그파일�
 
 mongoose
   .connect(__Config.MONGO_URL, {
-    dbName: "TheNodeAuth",
+    dbName: "SNS",
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -17,27 +20,33 @@ mongoose
     __logger.debug("Database connection Success.");
   })
   .catch((err) => {
-    __logger.error("Mongo Connection Error", err);
+    __logger.error("Mongo Connection Error"+ err);
   });
 
 const app = express();
 
-//body-parser를 써도 되지만 express에 기본내장되어있는걸로 씀
-app.use(express.json());                          // parse application/json
-app.use(express.urlencoded({ extended: true }));  // parse application/x-www-form-urlencoded
+// parse application/json
+app.use(express.json({ limit: "10mb" }));
+// parse application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+// NoSQL query injection
+app.use(mongoSanitize());
 
-
-//서버test
-app.get("/ping", (req, res) => {
-  return res.send({
+//서버 test
+app.get("/", (req, res) => {
+  res.json({
     error: false,
-    message: "Server is Healthy",
+    message: "Welcome to the API",
+    version: "V1"
   });
 });
 
+
+//라우트 셋팅
 app.use("/users", require(__base+"/routes/users"));
 
 
+//에러처리
 app.use(function (req, res, next) {
   __logger.error(req.body)
   res.status(404).json({
@@ -46,6 +55,7 @@ app.use(function (req, res, next) {
   });    
 });
 
+//에러처리 (오류)
 app.use(function (err, req, res, next) {
   __logger.error(err.stack)
   res.status(500).json({
@@ -62,5 +72,5 @@ process.on('uncaughtException', (err) => {
 });
 
 app.listen(__Config.PORT, () => {
-  __logger.debug("Server started listening on PORT : " + __Config.PORT);
+  __logger.debug("Server started PORT : " + __Config.PORT);
 });

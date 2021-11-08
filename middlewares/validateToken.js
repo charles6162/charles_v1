@@ -1,5 +1,32 @@
 const jwt = require("jsonwebtoken");
-const User = require("../src/users/user.model");
+const User = require(__base+"/model/user.model");
+
+const options = {
+  expiresIn: __Config.JWT_EXPRIE,
+};
+
+async function generateJwt(email, userId) {
+  try {
+    const payload = { email: email, id: userId };
+    const token = await jwt.sign(payload, __Config.JWT_SECRET, options);
+    return { error: false, token: token };
+  } catch (error) {
+    __logger.error(`Login error ${error}`);
+    return { error: true };
+  }
+}
+
+async function jwtverify(token, options) {
+  try {
+    const result = {};
+    const payload = { email: email, id: userId };    
+    result = await jwt.verify(token, __Config.JWT_SECRET, options);
+    result.error = true
+    return { error: false, token: token };
+  } catch (error) {
+    return {error: true ,message: 'token parsing error' };
+  }
+}
 
 async function validateToken(req, res, next) {
   const authorizationHeader = req.headers.authorization;
@@ -11,10 +38,8 @@ async function validateToken(req, res, next) {
     });
 
   const token = req.headers.authorization.split("Bearer ")[1]; // Bearer <token>
-  const options = {
-    expiresIn: "1h",
-  };
-  try {
+
+  try {    
     let user = await User.findOne({
       accessToken: token,
     });
@@ -38,8 +63,6 @@ async function validateToken(req, res, next) {
       return res.status(401).json(result);
     }
 
-    result["referralCode"] = user.referralCode;
-
     req.decoded = result;
     next();
   } catch (err) {
@@ -52,11 +75,11 @@ async function validateToken(req, res, next) {
     } else {
       result = {
         error: true,
-        message: `Authentication error`,
+        message: `토큰에러`,
       };
     }
     return res.status(403).json(result);
   }
 }
 
-module.exports = { validateToken };
+module.exports = { validateToken,generateJwt,jwtverify };

@@ -122,7 +122,7 @@ exports.Activate = async (req, res) => {
       error: true,
       message: error.message,
     });
-  }
+  } 
 };
 
 exports.Login = async (req, res) => {

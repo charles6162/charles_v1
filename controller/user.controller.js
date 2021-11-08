@@ -1,17 +1,8 @@
 const Joi = require("joi");
 const { v4: uuid } = require("uuid");
-const { customAlphabet: generate } = require("nanoid");
-
 const { generateJwt } = require(__base+"/middlewares/validateToken");
 const { sendEmail } = require(__base+"/middlewares/mailer");
 const User = require(__base+"/model/user.model");
-
-const CHARACTER_SET =
-  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-const REFERRAL_CODE_LENGTH = 8;
-
-const referralCode = generate(CHARACTER_SET, REFERRAL_CODE_LENGTH);
 
 //Joi로 유효성 검사
 const userSchema = Joi.object().keys({
@@ -74,8 +65,7 @@ exports.Signup = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Registration Success",
-      referralCode: result.value.referralCode,
+      message: "Registration Success"
     });
   } catch (error) {
     __logger.error(`signup-error ${error}`);

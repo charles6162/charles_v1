@@ -10,7 +10,7 @@ const userSchema = Joi.object().keys({
   password: Joi.string().required().min(4),
   confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
   referrer: Joi.string(),
-});  
+});   
  
 exports.Signup = async (req, res) => {
   try {
@@ -20,7 +20,7 @@ exports.Signup = async (req, res) => {
       return res.json({
         error: true,
         status: 400,
-        message: result.error.message,
+        message: result.error.message, 
       });
     }
    

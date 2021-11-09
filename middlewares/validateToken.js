@@ -25,7 +25,7 @@ async function jwtverify(token, options) {
     result.error = true
     return { error: false, token: token };
   } catch (error) {
-    return {error: true ,message: 'token parsing error' };
+    return {error: true ,message: 'token parsing error' }; 
   }
 }
 

@@ -5,7 +5,7 @@ const { validateToken } = require(__base+"/middlewares/validateToken");
 const UserController = require(__base+"/controller/user.controller");
 
 //회원가입
-router.post("/signup", xssFilter, UserController.Signup);
+router.post("/signup", xssFilter, UserController.Signup);  
 
 //이메일인증후 사용허가
 router.patch("/activate", xssFilter, UserController.Activate);

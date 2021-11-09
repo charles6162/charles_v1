@@ -3,7 +3,7 @@ const mongoose                      = require("mongoose");
 const mongoSanitize                 = require("express-mongo-sanitize");
 const { ErrorHandler, handleError } = require("./utils/error");
 
-require('dotenv').config();
+require('dotenv').config();  
 
 //global 설정
 global.__base      = __dirname;

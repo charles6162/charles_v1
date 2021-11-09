@@ -52,7 +52,7 @@ class ErrorHandler extends Error {
     //https://teamtreehouse.com/community/rangeerror-errhttpinvalidstatuscode-invalid-status-code-undefined-pretty-sure-the-issue-is-in-cardsjs
     const sCode = statusCode || 500;
   
-    if (__Config.NODE_ENV === "dev") {
+    if (__Config.NODE_ENV === "dev") { 
       responseObj = constructResponseObj(status, message, err, stack);
     } else if (__Config.NODE_ENV === "www") {
       if (err.isOperational) {

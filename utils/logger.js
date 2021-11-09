@@ -5,7 +5,7 @@ require('date-utils');
 
 /** 
 * @ 로그파일관리
-* logger.info("1111");
+* logger.info("1111"); 
 * logger.debug("2222");
 * logger.warn("3333");
 * logger.error("4444");

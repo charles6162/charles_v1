@@ -15,7 +15,7 @@ async function sendEmail(email, code) {
       <body>
         <p>Your authentication code is : </p> <b>${code}</b>
       </body>
-    </html>`;
+    </html>`; 
 
     // Create the SMTP transport.
     let transporter = nodemailer.createTransport({

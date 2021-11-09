@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 
 const User = require(__base+"/model/user.model");
 
-const passportConfig = { usernameField: 'email', passwordField: 'userId' };
+const passportConfig = { usernameField: 'email', passwordField: 'userId' }; 
 
 const passportVerify = async (userId, password, done) => {
   try {

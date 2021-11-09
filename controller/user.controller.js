@@ -1,7 +1,7 @@
 const Joi = require("joi");
 const { v4: uuid } = require("uuid");
 const { generateJwt } = require(__base+"/middlewares/validateToken");
-const { sendEmail } = require(__base+"/middlewares/mailer");
+const { sendEmail } = require(__base+"/utils/mailer");
 const User = require(__base+"/model/user.model");
 
 //Joi로 유효성 검사

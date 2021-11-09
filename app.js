@@ -1,14 +1,14 @@
 const express                       = require("express");
 const mongoose                      = require("mongoose");
 const mongoSanitize                 = require("express-mongo-sanitize");
-const { ErrorHandler, handleError } = require("./middlewares/error");
+const { ErrorHandler, handleError } = require("./utils/error");
 
 require('dotenv').config();
 
 //global 설정
 global.__base      = __dirname;
 global.__Config      = process.env;                              //properties
-global.__logger      = require(__base+"/middlewares/logger");    //로그파일관리
+global.__logger      = require(__base+"/utils/logger");    //로그파일관리
  
 mongoose 
   .connect(__Config.MONGO_URL, {
